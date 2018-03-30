@@ -47,6 +47,7 @@
     "http-status": "^1.0.1",
     "joi": "^13.1.2",
     "jsonwebtoken": "^8.2.0",
+    "lodash": "^4.17.5",
     "mongoose": "^5.0.12",
     "passport": "^0.4.0",
     "passport-facebook-token": "^3.3.0"
