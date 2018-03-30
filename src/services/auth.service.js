@@ -35,7 +35,7 @@ const jwtStrategy = new JWTStrategy(jwtOpts, async (payload, done) => {
 //facebook Strategy
 
 const fbOpts = {
-    profileFields: ["id", "birthday", "email", "first_name", "gender", "last_name","profileUrl", "picture.width(200).height(200)"],
+    ofileFields: ["id", "birthday", "email", "first_name", "gender", "last_name","profileUrl", "picture.width(200).height(200)"],
 }
 
 const facebookStrategy = new FacebookStrategy( fbOpts, async (accessToken, refreshToken, profile, done) => {

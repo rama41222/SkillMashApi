@@ -5,8 +5,10 @@
  */
 
 import users from './users/user.routes'
+import HTTP_STATUS from 'http-status'
 
 export default app => {
     app.use('/api/v1/users', users)
+    app.get('/', ( req, res ) => res.status(HTTP_STATUS.OK).send({ hello: "SKILLMASH" }))
 
 }

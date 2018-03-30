@@ -31,6 +31,10 @@ const UserSchema = new Schema({
         skill: {type: String, index: true},
         rating: {type: Number,index: true}
     }],
+    friends:[{
+        type: String,
+        ref: 'User'
+    }],
     block: {
         type: Boolean,
         default: false,

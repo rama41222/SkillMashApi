@@ -30,7 +30,7 @@ export async function getSkills(req, res) {
 
         let user = await User.findById(decoded._id)
             .select('skills')
-            .populate('skills',{ _id: 0, skill: 1, rating: 1 })
+            .populate('skills')
 
         if(!user) {
             return res.status(HTTP_STATUS.NO_CONTENT).send()
@@ -48,10 +48,70 @@ export async function createSkills(req, res) {
     try{
         const token = req.headers.authorization.split(' ')[1]
         const decoded = await jwt.verify(token, constants.JWT_SECRET)
+        const newRating = req.body.rating
+        const newSkill = req.body.skill
 
         let user = await User.findById(decoded._id)
-            .select('skills')
-            .populate('skills',{ _id: 0, skill: 1, rating: 1 })
+
+        let skillArray = user.skills
+
+        const newSkillSet = {
+            skill: newSkill,
+            rating: newRating
+        }
+
+        skillArray.push(newSkillSet)
+        let newUser = User.findByIdAndUpdate(user._id, { skills: skillArray})
+
+        if(!newUser) {
+            return res.status(HTTP_STATUS.NO_CONTENT).send()
+        }
+
+        res.status(HTTP_STATUS.OK).json({ skills: skillArray, user: newUser })
+    } catch(e) {
+        res.status(HTTP_STATUS.BAD_REQUEST).send()
+    }
+}
+
+export async function updateSkills(req, res) {
+    try{
+        const token = req.headers.authorization.split(' ')[1]
+        const decoded = await jwt.verify(token, constants.JWT_SECRET)
+        const newRating = req.body.rating
+        const newSkill = req.body.skill
+
+        let user = await User.findById(decoded._id)
+
+        let skillArray = user.skills
+
+        const newSkillSet = {
+            skill: newSkill,
+            rating: newRating
+        }
+
+        skillArray.push(newSkillSet)
+        let newUser = User.findByIdAndUpdate(user._id, {skills: skillArray})
+
+        if(!newUser) {
+            return res.status(HTTP_STATUS.NO_CONTENT).send()
+        }
+
+        res.status(HTTP_STATUS.OK).json({ skills: skillArray, user: newUser })
+    } catch(e) {
+        res.status(HTTP_STATUS.BAD_REQUEST).send()
+    }
+}
+
+export async function removeSkills(req, res) {
+    try{
+        const token = req.headers.authorization.split(' ')[1]
+        const decoded = await jwt.verify(token, constants.JWT_SECRET)
+        const newRating = req.body.rating
+        const newSkill = req.body.skill
+
+        let user = await User.findById(decoded._id)
+
+        let skillArray = user.skills
 
         if(!user) {
             return res.status(HTTP_STATUS.NO_CONTENT).send()

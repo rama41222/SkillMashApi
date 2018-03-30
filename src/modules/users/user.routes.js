@@ -11,9 +11,14 @@ import { authJwt, authFB } from '../../services/auth.service'
 
 const router = Router()
 
+//users
 router.post('/auth/facebook', authFB, UserController.fbLogin)
 router.get('/',authJwt , UserController.profile)
+
+//skills
 router.get('/skills',authJwt , UserController.getSkills)
+router.delete('/skills/:id',authJwt , UserController.removeSkills)
+router.put('/skills/:id',authJwt , UserController.updateSkills)
 router.post('/skills',[ authJwt, validation(UserValidation.skills) ] , UserController.createSkills)
 
 export default router
