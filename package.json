@@ -4,7 +4,11 @@
   "description": "Skill Mash Api ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf dist",
+    "build": "webpack",
+    "watch": "npm run clean && webpack -w",
+    "dev": "cross-env NODE_ENV=development npm run build  && node-dev ./dist/index.bundle.js",
+    "start": "cross-env NODE_ENV=production npm run build && NODE_ENV=production node ./dist/index.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +23,16 @@
   "bugs": {
     "url": "https://github.com/rama41222/SkillMashApi/issues"
   },
-  "homepage": "https://github.com/rama41222/SkillMashApi#readme"
+  "homepage": "https://github.com/rama41222/SkillMashApi#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "morgan": "^1.9.0",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.4.1",
+    "webpack-node-externals": "^1.6.0"
+  }
 }
