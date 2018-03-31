@@ -30,7 +30,6 @@ const jwtStrategy = new JWTStrategy(jwtOpts, async (payload, done) => {
         if (!user) {
             return done(null, false)
         }
-
         return done(null, user)
     } catch (error) {
         console.log(error.message)
@@ -46,33 +45,48 @@ const fbOpts = {
     profileFields: ["id", "birthday", "email", "first_name", "gender", "last_name","profileUrl", "picture.width(200).height(200)"],
 }
 
+
+
+
 const facebookStrategy = new FacebookStrategy( fbOpts, async (accessToken, refreshToken, profile, done) => {
     try {
-        console.log(profile)
-        let user = await User.findOne({ facebookId: profile.id})
+
+        const profJson = profile._json
+        const name = profJson.first_name +  " " + profJson.last_name
+        const pic = profJson.picture
+        const imgData = pic.data
+        const id = profile.id
+        const img = imgData.url
+        const email = profJson.email
+
+        let user = await User.findOne({ facebookId: id})
+        console.log(user)
         if(user) {
-            console.log("User exists")
             let updateUser = {
-                name: profile.displayName,
-                avatar: profile.photos[0].value
+                name: name,
+                avatar: img
             }
-            user = await User.findByIdAndUpdate(user._id ,updateUser)
-            done(null, user)
+            let updateDUser = await User.findByIdAndUpdate(user._id ,updateUser)
+            return done(null, updateDUser)
         } else {
+
+            console.log("--------->> ")
             let newUser = new User({
-                name: profile.displayName,
-                facebookId: profile.id,
-                avatar: profile.photos[0].value,
+                name: name,
+                facebookId: id,
+                avatar: img,
+                email: email
             })
 
             try {
-                user = await User.create(newUser)
-                done(null, user)
+                const userNew = await User.create(newUser)
+                done(null, userNew)
             } catch (e) {
-                return done(error, false)
+                return done(e, false)
             }
         }
     } catch (error) {
+        console.log(error.message)
         return done(error, false)
     }
 })

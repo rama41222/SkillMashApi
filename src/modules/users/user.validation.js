@@ -13,6 +13,10 @@ export default {
     skills: {
         body: {
             skill: Joi.string().required(),
+        },
+    },
+    rating: {
+        body: {
             rating: Joi.number().min(0).max(5).required(),
         },
     },

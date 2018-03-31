@@ -25,12 +25,17 @@ router.get('/:id/skills',authJwt , UserController.getSkills)
 //create a skill OK
 router.post('/:id/skills',[ authJwt, validation(UserValidation.skills) ] , UserController.createSkills)
 
-//update a skill
-router.put('/:id/skills/:sid',authJwt , UserController.updateSkills)
+//rate skills OK
+router.post('/:id/skills/:sid',[authJwt, validation(UserValidation.rating)] , UserController.rateSkill)
 
+//get all users and skills
+router.get('/',authJwt , UserController.getAllUserRating)
+
+// //get all users with aggregated rating skill
+// router.get('/skills',authJwt , UserController.getRatingAll)
 
 //remove a skill
-router.delete('/:id/skills/:sid',authJwt , UserController.removeSkills)
+// router.delete('/:id/skills/:sid',authJwt , UserController.removeSkills)
 
 
 // //friends
@@ -53,8 +58,7 @@ router.delete('/:id/skills/:sid',authJwt , UserController.removeSkills)
 //
 // //users
 //
-// //get all users
-// router.get('/',authJwt , UserController.getSkills)
+
 // //add user as a friend
 // router.post('/:uid',authJwt , UserController.getSkills)
 

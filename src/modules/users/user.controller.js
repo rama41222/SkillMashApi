@@ -11,14 +11,19 @@ import constants from './../../config/constants'
 import User from './user.model'
 
 export function fbLogin(req, res, next) {
+    const authToken = `bearer ${req.user.createToken()}`
+    res.set('token', authToken)
     res.status(HTTP_STATUS.OK).json(req.user.toJSON())
     return next()
 }
 
 export async function profile(req, res) {
     try{
+        const authToken = `bearer ${req.user.createToken()}`
+        res.set('token', authToken)
         res.status(HTTP_STATUS.OK).json(req.user.toJSON())
     } catch(e) {
+        console.log(e.message)
         res.status(HTTP_STATUS.BAD_REQUEST).send()
     }
 }
@@ -29,12 +34,11 @@ export async function getSkills(req, res) {
         const decoded = await jwt.verify(token, constants.JWT_SECRET)
         const uuid = req.params.id || null
 
-        const uuid = req.params.id
-        if(!uuid || uuid !== decoded._id) {
+        if(!uuid) {
             return res.status(HTTP_STATUS.UNAUTHORIZED).send()
         }
 
-        let user = await User.findById(decoded._id)
+        let user = await User.findById(uuid)
             .select('skills')
             .populate('skills')
 
@@ -60,102 +64,93 @@ export async function createSkills(req, res) {
             return res.status(HTTP_STATUS.UNAUTHORIZED).send()
         }
 
-        const newRating = req.body.rating
         const newSkill = req.body.skill
 
         let user = await User.findById(decoded._id)
-
         let skillArray = user.skills
 
-        const newSkillSet = {
-            skill: newSkill,
-            rating: newRating
+        let newSkillSet = {
+            skill: newSkill
         }
 
+        newSkillSet = [newSkillSet]
+
         skillArray.push(newSkillSet)
-        let newUser = User.findByIdAndUpdate(user._id, { skills: skillArray})
+        let newSkillArray = _.unionBy(newSkillSet, skillArray, 'skill');
+
+        let newUser = await User.findByIdAndUpdate(user._id, { skills: newSkillArray})
 
         if(!newUser) {
             return res.status(HTTP_STATUS.NO_CONTENT).send()
         }
 
-        res.status(HTTP_STATUS.OK).json({ skills: skillArray, user: newUser })
+        res.status(HTTP_STATUS.OK).send()
     } catch(e) {
+        console.log(e.message)
         res.status(HTTP_STATUS.BAD_REQUEST).send()
     }
 }
 
-export async function updateSkills(req, res) {
+export async function rateSkill(req, res) {
     try{
         const token = req.headers.authorization.split(' ')[1]
         const decoded = await jwt.verify(token, constants.JWT_SECRET)
 
+        const newRating = req.body.rating
+        const sid = req.params.sid
         const uuid = req.params.id || null
-        if(!uuid || uuid !== decoded._id) {
+
+        if(!uuid) {
             return res.status(HTTP_STATUS.UNAUTHORIZED).send()
         }
 
-        const sid = req.params.sid
-        const newRating = req.body.rating
-        const newSkill = req.body.skill
+        let user = await User.findById(uuid)
 
-        let user = await User.findById(decoded._id)
+
+        let skillArray = user.skills
+        console.log(skillArray)
+
+        let skill = await _.find(skillArray, function(o) {
+            console.log(o)
+            console.log(`sid ${sid} === > ${o._id}`)
+            return o._id == sid
+        });
+
+        skill.rating.push(newRating)
+        skill = [skill]
+
+        let newSkillArray = _.unionBy(skill, skillArray, 'skill');
+        console.log(newSkillArray)
+
+        let newUser = await User.findByIdAndUpdate(user._id, { skills: newSkillArray})
 
         if(!user) {
             return res.status(HTTP_STATUS.NO_CONTENT).send()
         }
 
-        let skillArray = user.skills
-        let skill = _.find(skillArray, { sid });
-
-        skill.rating = newRating
-        skill.skill = newSkill
-
-        let result = _.filter(skillArray,function(item){
-            return item._id === sid ? item : ''
-        });
-
-
-        if(!result) {
-            return res.status(HTTP_STATUS.NO_CONTENT).send()
-        }
-
-        result.skill = newSkill
-        result.rating = newRating
-
-        _.union(result, skillArray);
-
-        let newUser = User.findByIdAndUpdate(user._id, {skills: skillArray})
-
-        if(!newUser) {
-            return res.status(HTTP_STATUS.NO_CONTENT).send()
-        }
-
-        res.status(HTTP_STATUS.OK).json({ skills: skillArray, user: newUser })
+        res.status(HTTP_STATUS.OK).send()
     } catch(e) {
+        console.log(e.message)
         res.status(HTTP_STATUS.BAD_REQUEST).send()
     }
 }
 
-// export async function removeSkills(req, res) {
-//     try{
-//         const token = req.headers.authorization.split(' ')[1]
-//         const decoded = await jwt.verify(token, constants.JWT_SECRET)
-//         const newRating = req.body.rating
-//         const newSkill = req.body.skill
-//
-//         let user = await User.findById(decoded._id)
-//
-//         let skillArray = user.skills
-//
-//         if(!user) {
-//             return res.status(HTTP_STATUS.NO_CONTENT).send()
-//         }
-//
-//         let skills = await user.toJSONSkills()
-//
-//         res.status(HTTP_STATUS.OK).json(skills)
-//     } catch(e) {
-//         res.status(HTTP_STATUS.BAD_REQUEST).send()
-//     }
-// }
+export async function getAllUserRating(req, res) {
+    try{
+        const token = req.headers.authorization.split(' ')[1]
+        const decoded = await jwt.verify(token, constants.JWT_SECRET)
+
+        let users = await User.find().select({token:0,email:0}).limit(50)
+        let modUsers = []
+        for(let user of users) {
+            let featuredskill = user.skills[_.random(0, user.skills.length-1)]
+            user.skills = featuredskill
+            modUsers.push(user)
+        }
+        res.status(HTTP_STATUS.OK).send(modUsers)
+    } catch(e) {
+        console.log(e.message)
+        res.status(HTTP_STATUS.BAD_REQUEST).send()
+    }
+}
+

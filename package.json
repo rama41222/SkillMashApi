@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "webpack",
-    "watch": "npm run clean && webpack -w",
-    "dev": "cross-env NODE_ENV=development npm run build  && node-dev ./dist/index.bundle.js",
-    "start": "cross-env NODE_ENV=production npm run build && NODE_ENV=production node ./dist/index.bundle.js"
+    "build": "webpack --mode development",
+    "watch": "npm run clean && webpack -w --mode development",
+    "dev": "NODE_ENV=development npm run build  && NODE_ENV=development node-dev ./dist/index.bundle.js",
+    "start": " NODE_ENV=production npm run build && NODE_ENV=production node ./dist/index.bundle.js"
   },
   "repository": {
     "type": "git",

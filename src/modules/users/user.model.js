@@ -15,8 +15,7 @@ const UserSchema = new Schema({
         type: String,
         trim: true,
         required: true,
-        index: { unique: true },
-        default: null,
+        index: { unique: true }
     },
     avatar: {
         type: String,
@@ -24,12 +23,17 @@ const UserSchema = new Schema({
     },
     name: {
         type: String,
-        required: [true, 'Name cannot be empty'],
+        required: true,
         trim: true,
     },
+    email: {
+        type: String,
+        required: true,
+        trim: true
+    },
     skills: [{
-        skill: {type: String, index: true},
-        rating: {type: Number,index: true}
+        skill: {type: String, default: "Default"},
+        rating: [{type: Number, default: 0}],
     }],
     friends:[{
         type: String,
@@ -54,17 +58,26 @@ UserSchema.methods = {
     toJSON() {
         return {
             _id: this._id,
-            skills: this.skills,
             name: this.name,
             avatar: this.avatar,
-            token: `bearer ${this.createToken()}`,
+            email:this.email,
+            skills: this.skills,
+            friends: this.friends
         }
     },
     toJSONSkills() {
         return {
-            achievements: _.toArray(this.skills),
+            skills: _.toArray(this.skills),
         }
     },
+    toJSONImportant() {
+        return {
+            _id: this._id,
+            name: this.name,
+            avatar: this.avatar,
+            skills: this.skills,
+        }
+    }
 }
 
 UserSchema.statics = {
