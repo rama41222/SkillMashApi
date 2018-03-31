@@ -4,6 +4,18 @@
  * Last Modified: 3/31/18 2:25 AM by  Rama41222
  */
 
+const devConfig = {
+    MONGO_URL: 'mongodb://localhost/skillmash-dev',
+    JWT_SECRET: 'df#$EFDT$^$%&*(YUHGFYR^THF%$ETRFDfdrt56t5$N3cRH`',
+    FACEBOOK_SECRET:'dd7cd71543ee3887b0a92aa3307e3e7c'
+}
+
+const prodConfig = {
+    MONGO_URL: 'mongodb://localhost/skillmash-prod',
+    JWT_SECRET: 't_!`pz=u-`byQ+)v:+^N3cRH`',
+    FACEBOOK_SECRET:'dd7cd71543ee3887b0a92aa3307e3e7c'
+}
+
 
 const defaultConfig = {
     port: process.env.port || 3410,

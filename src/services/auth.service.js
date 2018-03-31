@@ -19,6 +19,12 @@ const jwtOpts = {
 const jwtStrategy = new JWTStrategy(jwtOpts, async (payload, done) => {
     console.log(payload)
     try {
+        // const uid = req.params.id
+        //
+        // if(uid !== payload._id) {
+        //     return done(null, false)
+        // }
+
         const user = await User.findById(payload._id)
 
         if (!user) {
@@ -35,7 +41,9 @@ const jwtStrategy = new JWTStrategy(jwtOpts, async (payload, done) => {
 //facebook Strategy
 
 const fbOpts = {
-    ofileFields: ["id", "birthday", "email", "first_name", "gender", "last_name","profileUrl", "picture.width(200).height(200)"],
+    clientID: "775429522651949",
+    clientSecret: constants.FACEBOOK_SECRET,
+    profileFields: ["id", "birthday", "email", "first_name", "gender", "last_name","profileUrl", "picture.width(200).height(200)"],
 }
 
 const facebookStrategy = new FacebookStrategy( fbOpts, async (accessToken, refreshToken, profile, done) => {

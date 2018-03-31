@@ -11,14 +11,53 @@ import { authJwt, authFB } from '../../services/auth.service'
 
 const router = Router()
 
-//users
+//users OK
 router.post('/auth/facebook', authFB, UserController.fbLogin)
-router.get('/',authJwt , UserController.profile)
+
+//get user profile OK
+router.get('/:id',authJwt , UserController.profile)
 
 //skills
-router.get('/skills',authJwt , UserController.getSkills)
-router.delete('/skills/:id',authJwt , UserController.removeSkills)
-router.put('/skills/:id',authJwt , UserController.updateSkills)
-router.post('/skills',[ authJwt, validation(UserValidation.skills) ] , UserController.createSkills)
+
+//get user skills OK
+router.get('/:id/skills',authJwt , UserController.getSkills)
+
+//create a skill OK
+router.post('/:id/skills',[ authJwt, validation(UserValidation.skills) ] , UserController.createSkills)
+
+//update a skill
+router.put('/:id/skills/:sid',authJwt , UserController.updateSkills)
+
+
+//remove a skill
+router.delete('/:id/skills/:sid',authJwt , UserController.removeSkills)
+
+
+// //friends
+//
+// //get all my friends
+// router.get('/:id/friends',authJwt , UserController.getSkills)
+//
+// //get my friends profile
+// router.get('/:id/friends/:fid',authJwt , UserController.getSkills)
+//
+// //remove user as a friend
+// router.delete('/:id/friends/:fid',authJwt , UserController.getSkills)
+//
+//
+// ////get my friends skills
+// router.get('/:id/friends/:fid/skills',authJwt , UserController.getSkills)
+//
+// ////rate my friends skills
+// router.post('/:id/friends/:fid/skills/:sid',[ authJwt, validation(UserValidation.skills) ] , UserController.createSkills)
+//
+// //users
+//
+// //get all users
+// router.get('/',authJwt , UserController.getSkills)
+// //add user as a friend
+// router.post('/:uid',authJwt , UserController.getSkills)
+
+
 
 export default router
